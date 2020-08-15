@@ -1,0 +1,137 @@
+#!/usr/bin/env node
+
+var model = require('../../../database/models');
+var utils = require('../../utils/responses');
+
+function getBugs(req, res, ops){
+
+    model.Bug.find(null, '-_id -_v', (err, doc) =>{
+
+        if(err) {
+            console.log('[ERROR]bugs/getBugs:', err);
+            utils.jsonBadResponse(res, 404);
+            return
+        }
+
+        utils.jsonResponse(res, 200, doc);
+
+    })
+    
+}
+
+function getBugDetails(req, res, ops){
+    //var products = db.collection('products');
+
+    //console.log('getOneProduct:', ops);
+
+    model.Bug.findOne({ id: ops.id }, '-_id -__v', (err, doc) => {
+
+        console.log('getOneBug:',doc);
+
+        if( err || doc == null){
+
+            console.log('[ERROR]bugs/getOneBug: Error', err );
+            utils.jsonBadResponse(res, 404);
+
+        } else {
+
+            console.log('bug/getOneBug: El elemento fue encontrado', doc);
+            utils.jsonResponse(res, 200, doc );
+
+        }
+
+    })
+    
+}
+
+function getProductsByCategory(req, res, ops){
+
+    //console.log('ops',ops)
+
+    model.Product.find({ category: ops.category }, '-_id -_v', (err, doc) =>{
+        if(err || doc === null) {
+            console.log('[ERROR]products/getProductsByCategory:', err);
+            utils.jsonBadResponse(res, 404);
+            return
+        }
+
+        //console.log('doc',doc)
+        utils.jsonResponse(res, 200, doc);
+
+    })
+}
+
+
+function searchProduct(req, res, ops){
+    /** testing now in post*/
+
+    console.log('searchProduct', ops);
+
+    var fields;
+    if( ops.mode === 'typing'){
+        fields = 'id product_name -_id';
+    } else {
+        fields = '-_id -__v';
+    }
+
+    var regex = new RegExp(ops.product_name,'gi')
+    model.Product.find({ product_name: regex }, fields, (err, doc) => {
+
+        //console.log('searchProduct:',doc);
+
+        if( err || doc == null){
+
+            console.log('[ERROR]products/searchProduct: Error', err );
+            utils.jsonBadResponse(res, 404);
+
+        } else {
+
+            console.log('products/searchProduct: Item found', doc);
+            utils.jsonResponse(res, 200, doc );
+
+        }
+
+    })
+}
+
+/*function getCovers(req, res, ops){
+    //var products = db.collection('products');
+
+    model.Cover.find(null, '-_id -_v', (err, doc) =>{
+
+        if(err) {
+            console.log('[ERROR]products/getProducts:', err);
+            utils.jsonBadResponse(res, 404);
+            return
+        }
+
+        utils.jsonResponse(res, 200, doc);
+
+    })
+    
+}*/
+
+function getTodayNumber(req, res, ops){
+    //var products = db.collection('products');
+
+    model.TodayNumber.find({ visible: true }, '-_id -_v', {sort: { timestamp: 'desc' }},(err, doc) =>{
+
+        if(err) {
+            console.log('[ERROR]products/getTodayNumber:', err);
+            utils.jsonBadResponse(res, 404);
+            return
+        }
+
+        utils.jsonResponse(res, 200, doc);
+
+    })
+    
+}
+
+module.exports = {
+     getBugs
+    ,getBugDetails
+    ,getProductsByCategory
+    ,searchProduct
+    ,getTodayNumber
+}

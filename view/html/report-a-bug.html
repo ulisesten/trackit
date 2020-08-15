@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Bug</title>
+    <link rel="stylesheet", href="css/report-a-bug.css"></link>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+<body>
+    <header class="header">
+        <span id="toggle-menu" class="material-icons menu">menu</span>
+        <span id="toggled-menu" class="material-icons menu">menu_open</span>
+        <div class="header-container logo-nav-container">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Type a tag.."/>
+                <span class="material-icons search-button">search</span>
+            </div>
+            <nav class="navigation">
+                <ul>
+                    <li><span class="material-icons clickable" title="Notificaciones">notifications</span></li>
+                    <li><span class="material-icons clickable" title="Mi Cuenta">account_circle</span></li>
+                    <li><span id="salir" class="material-icons clickable" title="Salir">exit_to_app</span></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="header-block"></div>
+
+    <main>
+        <div class="main-wraper">
+            <div class="form">
+                <div>
+                    <label id="username"> User Name:</label>
+                    <span>Username</span>
+                </div>
+                <div>
+                    <label id="user-id">  User ID:  </label>
+                    <span>Id</span>
+                </div>
+
+                <div>
+                    <label for="bug-name"> Bug Name: </label>
+                    <input id="bug-name" type="text">
+                </div>
+                <div>
+                    <label for="bug-description"> Description: </label>
+                    <input id="bug-description" type="text">
+                </div>
+                <div>
+                    <label for="how-to-rep"> How to reproduce it: </label>
+                    <input id="how-to-rep" type="text">
+                </div>
+                <div>
+                    <label for="severity">Severity:</label>
+                    <input id="severity" type="text">
+                </div>
+                
+                <div>
+                    <label for="priority">Priority:</label>
+                    <select name="Priority" id="priority">
+                        <option value="high">   High   </option>
+                        <option value="middle"> Medium </option>
+                        <option value="low">    Low    </option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="status">Status</label>
+                    <select name="status" id="status">
+                        <option value="new">    New    </option>
+                        <option value="reopen"> Reopen </option>
+                        <option value="close">  Close  </option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="suggested-fix">Suggested Fix:</label>
+                    <input id="suggested-fix" type="text">
+                </div>
+
+            </div>
+        </div>
+    </main>
+    
+</body>
+</html>

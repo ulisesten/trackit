@@ -1,0 +1,238 @@
+#!/usr/bin/env node
+
+var parser = require('../../utils/parser');
+var model = require('../../../database/models');
+var createid = require('nanoid');
+var utils = require('../../utils/responses');
+
+/**ulisesten. agosto 27 2019 */
+
+function setBug(req, res, ops){
+    var body = '';
+
+    /** handle body */
+    req.on('data', data => {    body += data;    });
+
+    req.on('end', () => {
+            
+        body = parser.parseJson(body);
+
+        //validating parameters
+        if(    body.bug_title
+            && body.description
+            && body.priority
+            && body.severity
+            && body.status
+            && body.area
+            && body.tester_id
+            && body.how_to_rep ) {
+
+                body.id = 'bug-' + createid();
+                body.timestamp = new Date(); 
+
+            var bug = new model.Bug(body);
+
+            bug.save((err, doc) => {
+                if (err) {
+                    //console.log('[ERROR]bugs/setBug: Error al intentar guardar',err);
+                    utils.jsonBadResponse(res, 507);
+                } else {
+                    //console.log('bugs/setBug: El elemento se guardo_ correctamente', doc.id);
+                    utils.jsonResponse(res, 200, { productid: doc.id });
+                }
+            });
+            
+        } else {
+
+            console.log('[BAD]bugs/setBug: Bad request');
+            utils.jsonBadResponse(res, 400);
+
+        }
+
+    });
+
+}
+
+function updateProduct(req, res, ops){
+
+    var body = '';
+
+    req.on('data', data => {    body += data;    });
+
+    req.on('end', () => {
+            
+        body = parser.parseJson(body);
+
+        body.updated = new Date();
+
+        model.Product.findOneAndUpdate({id: body.id}
+            , body 
+            ,{ useFindAndModify: false }, (err, doc, result) => {
+        
+            if (err) {
+
+                console.log('[ERROR]products/updateProduct: Error al intentar actualizar',err);
+                utils.jsonBadResponse(res, 507);
+
+            } else {
+
+                console.log('products/updateProduct: El elemento se actualizo_ correctamente', doc.id);
+                utils.jsonResponse(res, 200, { productid: doc.id });
+                
+            }
+
+        })
+
+    })
+}
+
+function setCover(req, res, ops){
+    var body = '';
+
+    /** handle body */
+    req.on('data', data => {    body += data;    });
+
+    req.on('end', () => {
+            
+        body = parser.parseJson(body);
+
+        console.log('Testing setCover...');
+        console.log('body:',body);
+
+        //validating parameters
+        if( body !== null
+            && body.cover_id
+            && body.description
+            && body.seller_id
+            && body.seller_name ) {
+
+                var date = new Date();
+                var days = 15;
+
+                body.id = 'cover-' + createid();
+                body.timestamp = date;
+                body.exp_date = date.setTime(
+                    date.getTime() + days * 86400000
+                );
+
+            var cover = new model.Cover(body);
+
+            cover.save((err, doc) => {
+                if (err) {
+                    console.log('[ERROR]products/setCover: Error al intentar guardar',err);
+                    utils.jsonBadResponse(res, 507);
+                } else {
+                    console.log('products/setCover: El elemento se guardo_ correctamente', doc.id);
+                    utils.jsonResponse(res, 200, { productid: doc.id });
+                }
+            });
+            
+        } else {
+
+            console.log('[BAD]products/setCover: Bad request');
+            utils.jsonBadResponse(res, 400);
+
+        }
+
+    });
+
+}
+
+function setTodayNumber(req, res, ops){
+    var body = '';
+
+    /** handle body */
+    req.on('data', data => {    body += data;    });
+
+    req.on('end', () => {
+            
+        body = parser.parseJson(body);
+
+        console.log('Testing setTodayNumber...');
+        console.log('body:',body);
+
+        //validating parameters
+        if(    body.number
+            && body.description ) {
+
+                body.id = 'number-' + createid();
+                body.visible = true;
+                body.timestamp = new Date();
+                
+
+            var num = new model.TodayNumber(body);
+
+            num.save((err, doc) => {
+                if (err) {
+
+                    console.log('[ERROR]products/setTodayNumber: Error al intentar guardar',err);
+                    utils.jsonBadResponse(res, 507);
+
+                } else {
+                    console.log('products/setTodayNumber: El elemento se guardo_ correctamente', doc.id);
+                    utils.jsonResponse(res, 200, { productid: doc.id });
+
+                }
+            });
+            
+        } else {
+
+            console.log('[BAD]products/setTodayNumber: Bad request');
+            utils.jsonBadResponse(res, 400);
+
+        }
+
+    });
+
+}
+
+/**Exception*/
+function searchProduct(req, res, ops){
+    /** testing now in post*/
+
+    var body = '';
+
+    /** handle body */
+    req.on('data', data => {    body += data;    });
+
+   
+    req.on('end', () => {
+        body = parser.parseJson(body);
+        console.log('searchProduct', body.query);
+
+        var fields;
+        if( body.mode === 'typing'){
+            fields = 'id product_name -_id';
+        } else {
+            fields = '-_id -__v';
+        }
+
+        var regex = new RegExp(body.query,'gi')
+        model.Product.find({ product_name: regex }, fields, (err, doc) => {
+
+            //console.log('searchProduct:',doc);
+
+            if( err || doc == null){
+
+                console.log('[ERROR]products/searchProduct: Error', err );
+                utils.jsonBadResponse(res, 404);
+
+            } else {
+
+                console.log('products/searchProduct: Item found', doc);
+                utils.jsonResponse(res, 200, {'arr': doc} );
+
+            }
+
+        })
+    });
+}
+
+
+module.exports = {
+    setBug
+   ,updateProduct
+   ,setCover
+   ,setTodayNumber
+   ,searchProduct
+}

@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+
+var get = require('../server/get/get');
+var post = require('../server/post/post');
+var view = require('../server/view/view');
+
+function app( req, res){
+
+    var responseCatched = false;
+
+    req.url = req.url.replace(/^(\.\.[\/\\])+/, '');
+
+    if(req.method === 'GET'){
+        
+        /**@mUse returns true if static() catch the request */
+        responseCatched = view( req, res );
+        
+        if( !responseCatched )
+            get( req, res);
+
+    } else if (req.method === 'POST')
+
+        post( req, res );
+
+    else {
+
+        res.status = 404;
+        res.end();
+
+    }
+
+        
+}
+
+module.exports = app;

@@ -1,0 +1,50 @@
+{
+  "name": "platform",
+  "version": "0.0.1",
+  "description": "Node.js sample app",
+  "main": "server.js",
+  "gypfile": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "before": "node ./server/utils/minifier",
+    "test": "IP=0.0.0.0 PORT=8080 mocha test/*_test.js --exit",
+    "build": "node-gyp rebuild",
+    "clean": "node-gyp clean"
+  },
+  "engine": {
+    "node": "14.5.0",
+    "npm": "6.14.5"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "cookie": "^0.3.1",
+    "csrf-token": "^1.1.0",
+    "firebase-admin": "^8.10.0",
+    "http-errors": "^1.7.1",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-simple": "^0.5.6",
+    "mocha": "^8.1.0",
+    "mongodb": "^3.5.5",
+    "mongoose": "^5.7.5",
+    "morgan": "^1.7.0",
+    "nanoid": "^2.0.0",
+    "node-addon-api": "^1.7.2",
+    "node-minify": "^3.6.0",
+    "socket.io": "^2.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/ulisesten/neki-platform.git"
+  },
+  "author": "ulisesten <ulises.mtz.el@gmail.com>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "http://github.com/ulisesten/neki-platform/issues"
+  },
+  "homepage": "http://github.com/ulisesten",
+  "devDependencies": {
+    "node-gyp": "^5.1.0"
+  }
+}

@@ -1,0 +1,30 @@
+#! /usr/bin/env node
+
+var jwt = require('./jwt');
+var cookie = require('cookie');
+const { use } = require('chai');
+
+
+
+function checkForAccess(incomingCookie){
+
+    var access = false;
+
+    var parsedCookie = cookie.parse(String(incomingCookie));
+        
+    if( parsedCookie.token || parsedCookie.token ){
+
+        var decodedToken = jwt.decodeToken(parsedCookie.token)
+
+        if( decodedToken ){
+            access = true;
+        }
+    }
+        
+    return access;
+
+}
+
+module.exports = {
+    checkForAccess
+}

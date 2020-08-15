@@ -1,0 +1,73 @@
+#!/usr/bin/env node
+
+var bugs = require('./routes/bugs');
+var messages = require('./routes/messages')
+var contacts = require('./routes/contacts');
+var c_urlparser = require('../../build/Release/urlparser.node');
+
+
+function get(req, res, ops){
+
+    var use = false;
+
+    var url = c_urlparser.parse(req.url);
+
+    
+    /**@Products */
+    if(url.path === '/getBugs') {
+
+        bugs.getBugs(req, res, url);
+        use = true;
+
+    }
+
+    else if(url.path === '/getBugDetails') {
+
+        bugs.getBugDetails(req, res, url);
+        use = true;
+
+    }
+
+    else if(url.path === '/getProductsByCategory') {
+        bugs.getProductsByCategory(req, res, url);
+        use = true;
+    }
+
+    else if(url.path === '/searchProduct'){
+        bugs.searchProduct(req, res, url);
+        use = true;
+    }
+
+
+    /**@Messages */
+    else if( url.path === '/getMessages' ){
+        messages.getMessages(req, res, url);
+        use = true;
+    }
+
+    else if( url.path === '/getNotifications' ){
+        messages.getMessageNotifications(req, res, url);
+        use = true;
+    }
+
+    else if( url.path === '/getTodayNumber' ){
+        bugs.getTodayNumber( req, res, url );
+        use = true;
+    }
+
+
+    /**@Contacts */
+    else if(url.path === 'searchContact') {
+        contacts.searchContact(req, res, url);
+    }
+
+    else {
+        res.statusCode = 404;
+        res.end("Status 404. Not Found\n");
+    }
+
+    return use;
+    
+}
+
+module.exports = get;

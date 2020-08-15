@@ -1,0 +1,73 @@
+#!/usr/bin/env node
+
+/**     Utils     */
+
+var nanoid = require('nanoid');
+var cookie = require('cookie');
+
+
+function jsonResponse(res, status, jsondata){
+    console.log('jsonResponse:','status ' + status);
+    res.writeHead(status, {'Set-Cookie': genCookie(jsondata.credentials),'Content-Type': 'application/json; charset=utf-8'});
+    res.write(JSON.stringify(jsondata));
+    res.end();
+}
+
+
+
+function jsonBadResponse(res, status){
+    console.log('[BAD!]jsonBadResponse:','status ' + status);
+    res.writeHead(status);
+    res.end();
+}
+
+
+
+function createDatabaseUserInfoObject(req, body, hash){
+    var myObject = {
+        user_id: nanoid(),
+        email: body.email,
+        username: body.username,
+        password: hash,
+        image: null,
+        role: 0,
+        user_ip: req.connection.remoteAddress,
+        contrib: true,
+        timestamp: Date()
+    };
+
+    console.log('userInfoObject', myObject);
+
+    return myObject;
+}
+
+
+
+function handleCredentials(client, server){
+
+}
+
+function genCookie(toCookie){
+    return cookie.serialize('token', String(toCookie), {
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+        path: '/'
+    })
+}
+
+function clearCookie(){
+    return cookie.serialize('token', String(''), {
+        httpOnly: true,
+        expires: new Date(1), // 1 week
+        path: '/'
+    })
+}
+
+
+
+module.exports = {
+    jsonResponse,
+    jsonBadResponse,
+    handleCredentials,
+    createDatabaseUserInfoObject
+}

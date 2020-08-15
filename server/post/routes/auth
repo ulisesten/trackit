@@ -1,0 +1,211 @@
+#!/usr/bin/env node
+
+var db = require('../../../database/connect');
+var model= require('../../../database/models');
+var util = require('../../utils/responses');
+var parser = require('../../utils/parser');
+var enc = require('../../utils/encryption')
+var jwt = require('../../utils/jwt');
+
+var usersCollection = db.collection('usuarios');
+
+function onLogin(res, err, auth, data){
+    if(auth === true) {
+
+        console.log('Login usuario AUTHORIZED')
+        var token = jwt.createJsonWebToken(data);
+        util.jsonResponse(res, 200, { id: data.id, device_id: data.device_id, username: data.username, founder: data.founder, credentials: token});
+
+    } else {
+
+        console.log('[BAD!]Login usuario NOT authorized!',err)
+        util.jsonBadResponse(res, 403);
+
+    }
+
+
+}
+
+function onRegister(res, err, data){
+
+    if (err) {
+        /** Saving Error */
+        console.log('[ERROR!]Register Error al intentar guardar',err);
+        util.jsonBadResponse(res, 403);
+        
+    } else {
+        /** Saved successfuly */
+        console.log('Register El siguiente usuario se guard_o correctamente:', data.username);
+        var token = jwt.createJsonWebToken(data);
+        util.jsonResponse(res, 200, {id: data.id, device_id: data.device_id, username: data.username, credentials: token });
+
+    }
+
+}
+
+function queryingDB(res, body){
+
+    usersCollection.findOne({ 'email': body.email},'-image -role -user_ip -timestamp', function(err, doc){
+
+        if(!doc){
+            console.log('[BAD!]Login usuario NO existe',err)
+            util.jsonBadResponse(res, 401);
+                
+        } else {
+
+            var userLoginInfo = {
+                id: doc.id
+                /*device_id: doc.device_id,
+                email: doc.email,
+                username: doc.username,
+                password: doc.password,
+                profile_picture: doc.profile_picture,
+                role: doc.role,
+                department: doc.department*/
+            }
+
+            enc.loginDecryption(body.password, doc.password, (err, auth) => {
+                onLogin(res, err, auth, userLoginInfo);
+            });
+        }
+
+    });
+
+}
+
+function mobileLogin(req, res, ops){
+    var body = '';
+
+    req.on('data', data => {    body += data;    });
+
+    req.on('end', () => {
+        
+        body = parser.parseJson(body);
+
+        if(body !== null){
+            queryingDB(res, body);
+        } else {
+            util.jsonBadResponse(res, 400);
+        }
+
+    });
+
+}
+
+
+
+function attempToRegister(res, body){
+    
+    usersCollection.findOne({ 'email': body.email},'-imagen -role -ip -contrib -tiempo', function(err, doc){
+
+        if(!doc){
+            enc.registerEncryption( body.password , (err, hash) => {
+
+                var userInfo = util.createDatabaseUserInfoObject(res, body, hash);
+                var userModel = new model.User(userInfo);
+                
+                userModel.save((err, data) => {
+                    onRegister(res, err, userInfo);
+                });
+            });
+
+        } else {
+
+            console.log('[BAD!]Register:','Info not available. El usuario ya existe');
+            util.jsonBadResponse(res, 401);
+
+        }
+
+    })
+}
+
+function mobileRegister(req, res, ops){
+    var body = '';
+
+    req.on('data', data => {    body += data;    });
+
+    req.on('end', () => {
+        
+        body = parser.parseJson(body);
+
+        if( body !== null ){
+
+            attempToRegister( res, body );
+
+        } else {
+
+            util.jsonBadResponse(res, 400);
+
+        }
+
+    });
+
+}
+
+
+
+
+function updateProfile(req, res, ops){
+
+    var body = '';
+
+    req.on('data', data => {    body += data;    });
+
+    req.on('end', () => {
+            
+        body = parser.parseJson(body);
+
+        model.User.findOneAndUpdate({id: body.profile_id}
+            , { 'device_id': body.device_id } 
+            , { useFindAndModify: false }, (err, doc, result) => {
+        
+            if (err) {
+
+                console.log('[ERROR]auth/updateProfile: Error al intentar actualizar',err);
+                util.jsonBadResponse(res, 507);
+
+            } else {
+
+                console.log('auth/updateProfile: El elemento se actualizo_ correctamente', doc.id);
+                util.jsonResponse(res, 200, { productid: doc.id });
+                
+            }
+
+        })
+
+    })
+}
+
+function validateSession(req, res, ops){
+    var body = '';
+
+    req.on('data', data => {    body += data;    });
+
+    req.on('end', () => {
+
+        body = parser.parseJson(body);
+
+        console.log( 'log', body.token );
+
+        var isAuth = jwt.decodeToken(body.token);
+
+        if( isAuth !== null && isAuth !== undefined) {
+
+            console.log('auth/validateSession: Valid credentials', isAuth.id);
+            util.jsonResponse(res, 200, isAuth );
+
+        } else {
+
+            console.log('[ERROR]auth/validateSession: Invalid credentials');
+            util.jsonBadResponse(res, 401);
+
+        }
+    })
+}
+
+module.exports = {
+     mobileLogin
+    ,mobileRegister
+    ,updateProfile
+    ,validateSession
+}
