@@ -59,12 +59,13 @@ function get(req, res, ops){
     /**@Contacts */
     else if(url.path === '/searchContact') {
         contacts.searchContact(req, res, url);
+        use = true;
     }
 
-    else {
+    /*else {
         res.statusCode = 404;
         res.end("Status 404. Not Found\n");
-    }
+    }*/
 
     return use;
     
