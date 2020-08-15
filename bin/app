@@ -6,13 +6,13 @@ var view = require('../server/view/view');
 
 function app( req, res){
 
-    var responseCatched = false;
+    var responseCatched;
 
     req.url = req.url.replace(/^(\.\.[\/\\])+/, '');
 
     if(req.method === 'GET'){
         
-        /**@mUse returns true if static() catch the request */
+        /**@mUse returns true if view() catch the request */
         responseCatched = view( req, res );
         
         if( !responseCatched )
