@@ -57,7 +57,7 @@ function get(req, res, ops){
 
 
     /**@Contacts */
-    else if(url.path === 'searchContact') {
+    else if(url.path === '/searchContact') {
         contacts.searchContact(req, res, url);
     }
 
