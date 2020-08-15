@@ -59,7 +59,7 @@ var mUsername = localStorage.username;
 var mId = localStorage.id;
 
 if( mId === undefined || mUsername === undefined)
-    window.location.href = '/ingresar';
+    window.location.href = '/signin';
 else {
 
 
