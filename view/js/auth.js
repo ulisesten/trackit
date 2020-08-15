@@ -25,8 +25,6 @@ var registrar = el('signup-button');
 
 if(registrar !== null)
 registrar.addEventListener('click', (event) => {
-    
-    event.preventDefault();
 
     var username = el('username-register').value;
     var email = el('email-register').value;
@@ -76,7 +74,6 @@ function auth( url, email, password, username ){
         credentials: 'include',
         method: 'POST', // or 'PUT'
         headers: {
-            'Accept': 'application/json',
             'Content-Type': 'application/json; charset=utf-8',
         },
         body: JSON.stringify(body)

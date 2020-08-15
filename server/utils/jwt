@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 
-//var jwt = require('jwt-simple');
-var jwt = require('jsonwebtoken');
+var jwt = require('jwt-simple');
+//var jwt = require('jsonwebtoken');
 
 var secret = process.env.SECRET || 'skghksdngjhkjjk34wdfn894jk3';
 
 
 function createJsonWebToken(data){
-    //return jwt.encode(data, secret);
+    return jwt.encode(data, secret);
     
-    var token = jwt.sign( data, secret );
+    /*var token = jwt.sign( data, secret );
     console.log('token:',token);
-    return token
+    return token*/
 }
 
 function decodeToken(token){
 
-    //return jwt.decode(token, secret);
-    console.log('token', token);
+    return jwt.decode(token, secret);
+    /*console.log('token', token);
     
     try {
 
@@ -28,7 +28,7 @@ function decodeToken(token){
     } catch (error) {
         console.log('jwt', error);
         return null;
-    }
+    }*/
 
 }
 
