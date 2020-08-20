@@ -8,6 +8,8 @@ function static( req, res ){
     var use = false;
     
     if( req.url === '/' ) {
+
+        console.log( 'headers', req.headers );
         
         loader.loadHTML( './view/html/home.html', req, res );
         use = true;
@@ -41,7 +43,7 @@ function static( req, res ){
     /**@Scripts */
     else if( req.url === '/js/home.js') {
 
-        loader.loadFile( './view/js/home.min.js', req, res );
+        loader.loadFile( './view/js/home.js', req, res );
         use = true;
 
     } else if( req.url === '/js/ws.js') {

@@ -1,4 +1,10 @@
 
+/**User Info */
+var mUsername = localStorage.username;
+var mId = localStorage.id;
+var mToken = localStorage.token;
+
+
 /**Utils */
 function getEl(id){
     return document.getElementById(id);
@@ -8,9 +14,12 @@ function newEl(el){
     return document.createElement(el);
 }
 
-var queryHeaders = {
-    'Content-Type': 'application/json; charset=utf-8'
-}
+var queryHeaders =  new Headers()
+
+queryHeaders.append('Content-Type','application/json; charset=utf-8');
+queryHeaders.append('Authorization', 'Bearer ' + mToken);
+
+
 
 /**GET functions */
 function getData(url, callback){
@@ -54,9 +63,7 @@ toggledMenu.addEventListener('click', ()=>{
 });
 
 
-/**User Info */
-var mUsername = localStorage.username;
-var mId = localStorage.id;
+
 
 if( mId === undefined || mUsername === undefined)
     window.location.href = '/signin';
@@ -98,6 +105,7 @@ function bugCallback(data){
 
 
 getData( '/getBugs', bugCallback);
+
 
 }/**else end */
 

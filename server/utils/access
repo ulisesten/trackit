@@ -6,15 +6,15 @@ const { use } = require('chai');
 
 
 
-function checkForAccess(incomingCookie){
+function checkForAccess(bearer){
 
     var access = false;
 
-    var parsedCookie = cookie.parse(String(incomingCookie));
+    var authToken = bearer.split(" ")[1];
         
-    if( parsedCookie.token || parsedCookie.token ){
+    if( authToken ){
 
-        var decodedToken = jwt.decodeToken(parsedCookie.token)
+        var decodedToken = jwt.decodeToken(authToken)
 
         if( decodedToken ){
             access = true;

@@ -13,6 +13,7 @@ function getBugs(req, res, ops){
             return
         }
 
+        console.log('headers', req.headers);
         utils.jsonResponse(res, 200, doc);
 
     })

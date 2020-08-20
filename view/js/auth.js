@@ -19,8 +19,11 @@ function notificationBox(notification){
     }, 5000);
 }
 
-/**Registro */
 
+
+
+
+/**Registro */
 var registrar = el('signup-button');
 
 if(registrar !== null)
@@ -41,7 +44,6 @@ registrar.addEventListener('click', (event) => {
 
 
 /**Ingresar */
-
 var ingresar = el('login-button');
 
 if(ingresar !== null)
@@ -60,8 +62,9 @@ ingresar.addEventListener('click', (event) => {
 
 
 
-/**HTTP */
 
+
+/**HTTP */
 function auth( url, email, password, username ){
 
     var body = {
@@ -78,31 +81,29 @@ function auth( url, email, password, username ){
         },
         body: JSON.stringify(body)
     }).then(res => {
-            console.log('res',res.status);
-          /*if(res.ok === false){
-              throw new Error()
-              return;
-          } */
 
-          if( res.status !== 200) return null;
-          else return res.json();
-      }).then(res => {
-          if( res !== null ) {
+        console.log('res',res.status);
+
+        if( res.status !== 200) return null;
+        else return res.json();
+
+    }).then(res => {
+        if( res !== null ) {
               
-              console.log('not null',res);
+            console.log('not null',res);
 
-              localStorage.setItem("username", res.username);
-              localStorage.setItem("id", res.id);
-              localStorage.setItem("token", res.credentials);
+            localStorage.setItem("username", res.username);
+            localStorage.setItem("id", res.id);
+            localStorage.setItem("token", res.credentials);
 
-              window.location.href = '/';
+            window.location.href = '/';
 
-          } else {
+        } else {
 
-              console.log( 'problem with credentials' );
-              notificationBox('Problem with Credentials');
+            console.log( 'problem with credentials' );
+            notificationBox('Problem with Credentials');
 
-          }
+        }
 
-      });
+    });
 }

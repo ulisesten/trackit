@@ -7,10 +7,13 @@ var cookie = require('cookie');
 
 
 function jsonResponse(res, status, jsondata){
-    console.log('jsonResponse:','status ' + status);
-    res.writeHead(status, {'Content-Type': 'application/json; charset=utf-8', 'Authorization': genCookie(jsondata.credentials)});
+    //console.log('jsonResponse:', jsondata);
+    
+    res.statusCode = status;
+    res.setHeader('Content-Type','application/json; charset=utf-8')
     res.write(JSON.stringify(jsondata));
     res.end();
+
 }
 
 
@@ -61,7 +64,7 @@ function genCookie(toCookie){
         secure: true,
     })*/
 
-    return `bearer=${String(toCookie)}`;
+    return `Bearer ${String(toCookie)}`;
 }
 
 function clearCookie(){

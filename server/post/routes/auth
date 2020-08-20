@@ -184,10 +184,13 @@ function validateSession(req, res, ops){
     req.on('end', () => {
 
         body = parser.parseJson(body);
+        
+        //console.log( 'log', body.token );
+        
+        var authToken = req.headers.authorization.split(" ")[1];
+        //console.log('authToken', authToken);
 
-        console.log( 'log', body.token );
-
-        var isAuth = jwt.decodeToken(body.token);
+        var isAuth = jwt.decodeToken( authToken );
 
         if( isAuth !== null && isAuth !== undefined) {
 
