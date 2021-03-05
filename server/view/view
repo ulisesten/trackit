@@ -5,23 +5,17 @@ var access = require('../utils/access');
 var responses = require('../utils/responses')
 
 function static( req, res ){
+
     var use = false;
     
     if( req.url === '/' ) {
-
-        console.log( 'headers', req.headers );
         
         loader.loadHTML( './view/html/home.html', req, res );
         use = true;
 
     } else if(req.url === '/report-a-bug'){
 
-        /*if( !(access.checkForAccess(req.headers.cookie)) ){
-            responses.redirect(res, 303, '/signin' )
-        } else { */
-            loader.loadHTML( './view/html/report-a-bug.html', req, res );
-       // }
-        
+        loader.loadHTML( './view/html/report-a-bug.html', req, res );
         use = true;
 
     } else if( req.url === '/signin'){
@@ -34,48 +28,12 @@ function static( req, res ){
         loader.loadHTML( './view/html/signup.html', req, res );
         use = true;
 
+    } else {
+
+        loader.loadStaticFile( req.url, req, res );
+
     }
-
-
-
-
-
-    /**@Scripts */
-    else if( req.url === '/js/home.js') {
-
-        loader.loadFile( './view/js/home.js', req, res );
-        use = true;
-
-    } else if( req.url === '/js/ws.js') {
-
-        loader.loadFile( './view/js/socket.io.js', req, res );
-        use = true;
-    } else if( req.url === '/js/auth.js') {
-
-        loader.loadFile( './view/js/auth.min.js', req, res );
-        use = true;
-    }
-
-
-
-
     
-
-    /**@Styles */
-    else if( req.url === '/css/home.css' ) {
-
-        loader.loadCSS( './view/css/home.css', req, res );
-        use = true;
-
-    }
-
-    else if( req.url === '/css/report-a-bug.css' ) {
-
-        loader.loadCSS( './view/css/report-a-bug.css', req, res );
-        use = true;
-
-    }
-
     return use;
 
 }

@@ -2,6 +2,8 @@
 
 var auth = require('./routes/auth');
 var bugs = require('./routes/bugs');
+var access = require('../utils/access');
+var responser = require('../utils/responses');
 
 function post(req, res, ops){
     
@@ -23,8 +25,14 @@ function post(req, res, ops){
         bugs.searchProduct( req, res, ops );
 
     else
-    if ( req.url === '/set-bug' )
-        bugs.setBug( req, res, ops );
+    if ( req.url === '/set-bug' ){
+        /*if( access.checkForAccess(req.headers.authorization) )
+            bugs.setBug( req, res, ops );
+        else
+            responser.redirect(res, 401, '/signin');*/
+
+        (access.checkForAccess(req.headers.authorization) ? bugs.setBug( req, res, ops ) : responser.redirect(res, 401, '/signin'));
+    }
 
     else
     if ( req.url === '/update-bug' )

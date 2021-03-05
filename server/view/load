@@ -3,81 +3,6 @@
 var fs = require('fs');
 
 
-/**Load a script if this is updated, response 304 if no changes made */
-function loadFile( path, req, res ){
-
-    fs.stat( path , ( err, stats ) => {
-
-        var modified = Date.parse(stats.mtime);
-        var clienttime = Date.parse(req.headers['if-modified-since']);
-
-        if( modified > clienttime || !clienttime ){
-
-            //console.log('script modified');
-            var newheaders = { 'Content-Type': 'text/javascript; '
-                             , 'Last-Modified': stats.mtime + ';'
-                             , 'cache-control': 'max-age=0, private, must-revalidate;'
-                             };
-
-            fs.readFile(path, function(err, data){
-                if(!err){
-                    res.writeHead(200, newheaders)
-                    res.write(data)
-                } else {
-                    console.log(err)
-                    res.writeHead(404)
-                }
-                res.end()
-            })
-
-        } else {
-        
-            //console.log('script NOT modified');
-            var headers = { 'Content-Type': 'text/javascript; charset=utf-8;' };
-            res.writeHead(304, headers)
-            res.end();
-            
-        }
-
-    })
-}
-
-function loadCSS( path, req, res ){
-
-    fs.stat( path , ( err, stats ) => {
-
-        var modified = Date.parse(stats.mtime);
-        var clienttime = Date.parse(req.headers['if-modified-since']);
-        //console.log('modified', modified);
-        //console.log( 'clienttime' , clienttime );
-
-
-        if( modified > clienttime || !clienttime ){
-
-            //console.log('style modified');
-            var newheaders = { 'Content-Type': 'text/css; ', 'Last-Modified': stats.mtime + ';', 'cache-control': 'max-age=0, private, must-revalidate;' };
-
-            fs.readFile(path, function(err, data){
-                if(!err){
-                    res.writeHead(200, newheaders)
-                    res.write(data)
-                } else {
-                    console.log(err)
-                    res.writeHead(404)
-                }
-                res.end()
-            })
-
-        } else {
-            //console.log('style NOT modified');
-            var headers = { 'Content-Type': 'text/css; charset=utf-8;' };
-            res.writeHead(304, headers)
-            res.end();
-        }
-
-    })
-}
-
 function loadHTML(path, req, res){
 
     var headers = {'Content-Type': 'text/html; charset=utf-8'}
@@ -95,8 +20,71 @@ function loadHTML(path, req, res){
 
 }
 
+function loadStaticFile( fileName, req, res ){
+
+    var contentType = setHeaders(fileName.split('.')[1]);
+
+    fs.stat( 'view' + fileName , ( err, stats ) => {
+
+        if( err ) {
+            res.setHeader = 404;
+            res.write('Error 404: Page not found.\n');
+            res.end();
+            return;
+        }
+
+        var modified = Date.parse(stats.mtime);
+        var clienttime = Date.parse(req.headers['if-modified-since']);
+
+        if( modified > clienttime || !clienttime ){
+
+            var newheaders = { 'Content-Type': contentType
+                             , 'Last-Modified': stats.mtime + ';'
+                             , 'cache-control': 'max-age=0, private, must-revalidate;'
+                             };
+
+            
+            fs.readFile( 'view' + fileName, function(err, data){
+                if(!err){
+                    res.writeHead(200, newheaders);
+                    res.write(data);
+                } else if( !data || err ){
+                    console.log(err);
+                    res.writeHead(404);
+                }
+                res.end()
+            });
+
+        } else {
+
+            var headers = { 'Content-Type': contentType };
+            res.writeHead(304, headers)
+            res.end();
+
+        }
+
+    });
+}
+
+function setHeaders(ext){
+    var contentType;
+
+    switch(ext) {
+    
+        case 'js':
+            contentType = 'text/javascript; charset=utf-8';
+        break;
+
+        case 'css':
+            contentType = 'text/css; charset=utf-8';
+        break;
+        
+    }
+
+    return contentType;
+}
+
 module.exports = {
-    loadCSS,
     loadHTML,
-    loadFile
+    loadStaticFile
 }

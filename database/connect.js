@@ -8,7 +8,7 @@ mongoose.connect(mongoURL,{ useNewUrlParser: true, useUnifiedTopology: true }, f
     if (err) {
       console.log('mongoose.connect err:', err)
     } else {
-        console.log('mongodb connection success')
+        console.log('Database connection success')
     }
 });
 

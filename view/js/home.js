@@ -1,4 +1,6 @@
 
+/**Ulisesten */
+
 /**User Info */
 var mUsername = localStorage.username;
 var mId = localStorage.id;
@@ -14,7 +16,8 @@ function newEl(el){
     return document.createElement(el);
 }
 
-var queryHeaders =  new Headers()
+var queryHeaders =  new Headers();
+
 
 queryHeaders.append('Content-Type','application/json; charset=utf-8');
 queryHeaders.append('Authorization', 'Bearer ' + mToken);
@@ -29,6 +32,7 @@ function getData(url, callback){
         headers: queryHeaders,
         method: 'GET'
     }).then( res => {
+
         if( !res.ok ){
             console.log('getProduct: Error');
             return;
@@ -37,9 +41,11 @@ function getData(url, callback){
         return res.json();
 
     }).then( res => {
+
         if( res !== null ){
             callback(res)
         }
+        
     });
 
 }
@@ -105,6 +111,8 @@ function bugCallback(data){
 
 
 getData( '/getBugs', bugCallback);
+
+var socket = io();
 
 
 }/**else end */

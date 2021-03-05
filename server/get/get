@@ -62,11 +62,6 @@ function get(req, res, ops){
         use = true;
     }
 
-    else {
-        use=true;
-        res.end();
-    }
-
     return use;
     
 }

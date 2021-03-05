@@ -10,14 +10,17 @@ function checkForAccess(bearer){
 
     var access = false;
 
-    var authToken = bearer.split(" ")[1];
+    if(bearer){
+
+        var authToken = bearer.split(" ")[1];
         
-    if( authToken ){
-
-        var decodedToken = jwt.decodeToken(authToken)
-
-        if( decodedToken ){
-            access = true;
+        if( authToken ){
+            
+            var decodedToken = jwt.decodeToken(authToken)
+            
+            if( decodedToken ){
+                access = true;
+            }
         }
     }
         

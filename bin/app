@@ -13,10 +13,10 @@ function app( req, res){
     if(req.method === 'GET'){
         
         /**@mUse returns true if view() catch the request */
-        responseCatched = view( req, res );
+        responseCatched = get( req, res );
         
         if( !responseCatched )
-            get( req, res);
+            view( req, res);
 
     } else if (req.method === 'POST')
 

@@ -25,6 +25,7 @@ function jsonBadResponse(res, status){
 }
 
 function redirect( res, status, newUrl ){
+    console.log( 'redirect', status + " " + newUrl );
     res.writeHead(status, {'Location': newUrl});
     res.end();
 }

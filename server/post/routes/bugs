@@ -10,6 +10,8 @@ var utils = require('../../utils/responses');
 function setBug(req, res, ops){
     var body = '';
 
+    //console.log('bugs-req', req );
+
     /** handle body */
     req.on('data', data => {    body += data;    });
 
